@@ -1,31 +1,18 @@
 # EKS Terraform GitHub Actions
 
-Hands-on DevOps project for provisioning an Amazon EKS cluster with Terraform and automating infrastructure workflow checks through GitHub Actions.
+Infrastructure as Code project for provisioning Amazon EKS with Terraform and validating infrastructure workflow through GitHub Actions.
 
-## Project Overview
+This repository is designed as an interview-ready DevOps project because it connects AWS, Terraform, Kubernetes, and CI/CD into one practical infrastructure workflow.
 
-This repository demonstrates how Infrastructure as Code and CI/CD practices can be used together to manage Kubernetes infrastructure on AWS. The goal of the project is to show a clear DevOps workflow: define infrastructure in Terraform, review changes safely, and use GitHub Actions to validate or trigger infrastructure operations.
+## What This Project Demonstrates
 
-## What This Project Shows
+- Terraform-based AWS infrastructure provisioning
+- Amazon EKS cluster setup concepts
+- GitHub Actions workflow for IaC validation
+- Terraform `init`, `validate`, `plan`, and controlled `apply`
+- IAM, VPC, node group, and Kubernetes infrastructure understanding
 
-- AWS EKS cluster provisioning using Terraform
-- Infrastructure as Code structure for repeatable cloud setup
-- GitHub Actions workflow for automation
-- AWS IAM and provider configuration basics
-- Terraform plan/apply workflow understanding
-- Kubernetes cluster readiness for application deployment
-
-## Tech Stack
-
-| Area | Tools |
-|---|---|
-| Cloud | AWS, EKS, IAM, VPC |
-| IaC | Terraform |
-| CI/CD | GitHub Actions |
-| Containers | Docker, Kubernetes |
-| Version Control | Git, GitHub |
-
-## Suggested Architecture
+## High-Level Architecture
 
 ```text
 Developer
@@ -34,47 +21,100 @@ Developer
 GitHub Repository
    |
    v
-GitHub Actions Workflow
+GitHub Actions
    |
    v
-Terraform Init / Validate / Plan / Apply
+Terraform Init / Validate / Plan
    |
    v
-AWS Infrastructure
+AWS Resources
    |
    v
-EKS Cluster
+Amazon EKS Cluster
+   |
+   v
+Kubernetes Workloads
 ```
+
+## Tech Stack
+
+| Area | Tools |
+|---|---|
+| Cloud | AWS, EKS, IAM, VPC |
+| Infrastructure as Code | Terraform |
+| CI/CD | GitHub Actions |
+| Containers | Docker, Kubernetes |
+| Version Control | Git, GitHub |
+
+## Repository Structure
+
+| Path | Purpose |
+|---|---|
+| `.github/` | GitHub Actions workflow definitions |
+| `eks/` | EKS-related Terraform configuration |
+| `module/` | Reusable Terraform module structure |
+| `Jenkinsfile` | Optional Jenkins-based workflow reference |
+| `assets/` | Project images or reference assets |
 
 ## Typical Workflow
 
 1. Update Terraform configuration.
-2. Commit and push changes to GitHub.
-3. GitHub Actions validates the Terraform code.
+2. Commit and push changes.
+3. GitHub Actions validates Terraform syntax and formatting.
 4. Terraform plan shows expected infrastructure changes.
-5. Approved changes can be applied to AWS.
-6. EKS cluster becomes available for Kubernetes workloads.
+5. Apply is performed only after review/approval.
+6. EKS cluster is validated with `kubectl`.
+
+## Useful Commands
+
+```bash
+terraform init
+terraform fmt
+terraform validate
+terraform plan
+terraform apply
+```
+
+Validate EKS access:
+
+```bash
+aws eks update-kubeconfig --region <region> --name <cluster-name>
+kubectl get nodes
+kubectl get pods -A
+```
+
+## GitHub Actions Secrets
+
+Common secrets required for AWS-backed Terraform workflows:
+
+```text
+AWS_ACCESS_KEY_ID
+AWS_SECRET_ACCESS_KEY
+AWS_REGION
+```
+
+For production usage, prefer OIDC-based role assumption instead of long-lived access keys.
+
+## Troubleshooting Checklist
+
+- AWS credentials or OIDC role not configured correctly
+- IAM role missing required permissions
+- Terraform backend/state not configured correctly
+- VPC/subnet configuration does not satisfy EKS requirements
+- EKS node group stuck during creation
+- Region mismatch between AWS CLI, Terraform provider, and GitHub secrets
+- `kubectl` context not updated after cluster creation
 
 ## Interview Talking Points
 
-- Why Terraform state is important
+- Why Terraform is used for repeatable infrastructure
 - Difference between `terraform plan` and `terraform apply`
-- How GitHub Actions helps avoid manual infrastructure mistakes
-- How IAM permissions affect Terraform execution
-- Why EKS needs VPC, subnets, node groups, and security groups
-- How to troubleshoot failed Terraform or GitHub Actions runs
-
-## Troubleshooting Notes
-
-Common issues in this type of setup include:
-
-- AWS credentials not configured correctly
-- IAM user or role missing required permissions
-- Terraform state lock or backend configuration issues
-- EKS node group creation failures
-- GitHub Actions secrets not configured correctly
-- Region mismatch between Terraform provider and AWS resources
+- Why Terraform state is important
+- How GitHub Actions improves IaC review and validation
+- IAM permissions needed for infrastructure automation
+- EKS components: cluster, node group, VPC, subnets, security groups
+- How to troubleshoot failed Terraform or EKS creation
 
 ## Learning Outcome
 
-This project helped me understand the relationship between Terraform, AWS EKS, and CI/CD automation. It is useful for DevOps interviews because it connects cloud infrastructure, Kubernetes, and automated delivery workflow in one practical example.
+This project shows a real DevOps infrastructure workflow: source-controlled Terraform, automated validation, AWS infrastructure provisioning, and Kubernetes cluster readiness for application deployments.
